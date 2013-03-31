@@ -1,5 +1,7 @@
 package org.grails.plugins.cloudsearch
 
+import java.util.Map;
+
 import org.codehaus.groovy.grails.orm.hibernate.events.SaveOrUpdateEventListener
 import org.hibernate.HibernateException;
 import org.hibernate.event.FlushEvent;
@@ -20,19 +22,40 @@ class CloudSearchEventListener extends SaveOrUpdateEventListener implements Post
     /** Logger */
     private static final Logger LOG = Logger.getLogger(CloudSearchEventListener.class)
 	
-	@Override
-	public void onPostDelete(PostDeleteEvent event) {
-		LOG.debug("onPostDelete: ${event}")
-	}
+    /** CS context */
+    def cloudSearchContextHolder
+
+    /** List of pending objects to reindex. */
+    private static ThreadLocal<Map> pendingObjects = new ThreadLocal<Map>()
+
+    /** List of pending object to delete */
+    private static ThreadLocal<Map> deletedObjects = new ThreadLocal<Map>()
 
 	@Override
 	public void onPostInsert(PostInsertEvent event) {
 		LOG.debug("onPostInsert: ${event}")
+        def clazz = event.entity?.class
+        if (cloudSearchContextHolder.isRootClass(clazz)) {
+            // pushToIndex(event.persister.entityName, event.id, event.entity)
+        }
 	}
 
 	@Override
 	public void onPostUpdate(PostUpdateEvent event) {
 		LOG.debug("onPostUpdate: ${event}")
+        def clazz = event.entity?.class
+        if (cloudSearchContextHolder.isRootClass(clazz)) {
+            // pushToIndex(event.persister.entityName, event.id, event.entity)
+        }
+	}
+
+	@Override
+	public void onPostDelete(PostDeleteEvent event) {
+		LOG.debug("onPostDelete: ${event}")
+        def clazz = event.entity?.class
+        if (cloudSearchContextHolder.isRootClass(clazz)) {
+            // pushToDelete(event.persister.entityName, event.id, event.entity)
+        }
 	}
 
 	@Override
