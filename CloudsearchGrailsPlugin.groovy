@@ -1,3 +1,7 @@
+
+import org.grails.plugins.cloudsearch.CloudSearchEventListener
+import org.codehaus.groovy.grails.orm.hibernate.HibernateEventListeners
+
 class CloudsearchGrailsPlugin {
     // the plugin version
     def version = "0.1"
@@ -41,7 +45,17 @@ Brief summary/description of the plugin.
     }
 
     def doWithSpring = {
-        // TODO Implement runtime spring config (optional)
+		cloudsearchEventListener(CloudSearchEventListener)
+		
+		hibernateEventListeners(HibernateEventListeners) {
+			listenerMap = [
+				'post-delete': auditListener,
+				'post-collection-update': auditListener,
+				'post-update': auditListener,
+				'post-insert': auditListener,
+				'flush': auditListener
+			]
+		}
     }
 
     def doWithDynamicMethods = { ctx ->
