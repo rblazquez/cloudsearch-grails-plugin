@@ -7,17 +7,23 @@ class CloudsearchGrailsPlugin {
     def version = "0.1"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "2.2 > *"
+    // the other plugins this plugin depends on
+    def dependsOn = [
+            domainClass: "1.0 > *",
+            hibernate: "1.0 > *"
+    ]
+    def loadAfter = ['services']
     // resources that are excluded from plugin packaging
     def pluginExcludes = [
         "grails-app/views/error.gsp"
     ]
 
     // TODO Fill in these fields
-    def title = "Cloudsearch Plugin" // Headline display name of the plugin
-    def author = "Your name"
-    def authorEmail = ""
+    def title = "AWS CloudSearch Plugin" // Headline display name of the plugin
+    def author = "Danilo Tuler"
+    def authorEmail = "danilo.tuler@ideais.com.br"
     def description = '''\
-Brief summary/description of the plugin.
+AWS CloudSearch integration.
 '''
 
     // URL to the plugin's documentation
@@ -26,10 +32,10 @@ Brief summary/description of the plugin.
     // Extra (optional) plugin metadata
 
     // License: one of 'APACHE', 'GPL2', 'GPL3'
-//    def license = "APACHE"
+    def license = "APACHE"
 
     // Details of company behind the plugin (if there is one)
-//    def organization = [ name: "My Company", url: "http://www.my-company.com/" ]
+    def organization = [ name: "Ideais", url: "http://www.ideais.com.br/" ]
 
     // Any additional developers beyond the author specified above.
 //    def developers = [ [ name: "Joe Bloggs", email: "joe@bloggs.net" ]]
@@ -38,7 +44,7 @@ Brief summary/description of the plugin.
 //    def issueManagement = [ system: "JIRA", url: "http://jira.grails.org/browse/GPMYPLUGIN" ]
 
     // Online location of the plugin's browseable source code.
-//    def scm = [ url: "http://svn.codehaus.org/grails-plugins/" ]
+	def scm = [url: "https://github.com/tuler/cloudsearch-grails-plugin"]
 
     def doWithWebDescriptor = { xml ->
         // TODO Implement additions to web.xml (optional), this event occurs before
@@ -49,11 +55,11 @@ Brief summary/description of the plugin.
 		
 		hibernateEventListeners(HibernateEventListeners) {
 			listenerMap = [
-				'post-delete': auditListener,
-				'post-collection-update': auditListener,
-				'post-update': auditListener,
-				'post-insert': auditListener,
-				'flush': auditListener
+				'post-delete': cloudsearchEventListener,
+				'post-collection-update': cloudsearchEventListener,
+				'post-update': cloudsearchEventListener,
+				'post-insert': cloudsearchEventListener,
+				'flush': cloudsearchEventListener
 			]
 		}
     }
